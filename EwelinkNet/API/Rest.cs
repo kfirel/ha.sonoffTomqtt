@@ -1,6 +1,5 @@
 ﻿using EwelinkNet.Classes;
 using EwelinkNet.Helpers;
-using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using EwelinkNet.Constants;
-
+using Newtonsoft.Json;
 
 namespace EwelinkNet.API
 {
@@ -35,9 +34,9 @@ namespace EwelinkNet.API
         public static async Task<string> GetDevices(string url, string accessToken)
         {
             var client = new RestClient(url);
-
+            Ewelink.logger("getDevices client");
             var request = new RestRequest("/user/device", Method.GET);
-
+            Ewelink.logger("getDevices request" + request);
             request.AddQueryParameter("lang", "en");
             request.AddQueryParameter("getTags", "1");
             request.AddQueryParameter("version", AppData.VERSION);
@@ -51,9 +50,11 @@ namespace EwelinkNet.API
 
             request.AddHeader("Authorization", $"Bearer {accessToken}");
             request.RequestFormat = DataFormat.Json;
-
+            Ewelink.logger("getDevices cancellationTokenSource1" );
             var cancellationTokenSource = new CancellationTokenSource();
+            Ewelink.logger("getDevices cancellationTokenSource2");
             var response = await client.ExecuteAsync(request, cancellationTokenSource.Token);
+            Ewelink.logger("getDevices response" + response);
 
             return response.Content;
         }

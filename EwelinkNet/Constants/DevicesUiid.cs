@@ -63,7 +63,11 @@ namespace EwelinkNet.Constants
             ("BLADELESS_FAN", 1001),
             ("NEW_HUMIDIFIER", 1002),
             ("WARM_AIR_BLOWER", 1003),
-            ("SWITCH_3",162)
+            ("SWITCH",160),
+            ("SWITCH_2",161),
+            ("SWITCH_3",162),
+            ("SWITCH_6",174),
+            ("MOTOR",165),
         };
 
 

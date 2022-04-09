@@ -25,6 +25,7 @@ namespace EwelinkNet.Constants
             {"SOCKET_4", 4},
             {"GSM_SOCKET_4", 4},
             {"SWITCH_4", 4},
+            {"SWITCH_6", 6},
             {"CUN_YOU_DOOR", 4}
         };
 

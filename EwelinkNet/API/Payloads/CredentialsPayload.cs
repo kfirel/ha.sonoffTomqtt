@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using EwelinkNet.Constants;
 using EwelinkNet.Helpers;
-using Newtonsoft.Json;
+
 
 namespace EwelinkNet.Payloads
 {

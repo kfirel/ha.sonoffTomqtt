@@ -10,9 +10,8 @@ namespace EwelinkNet.Classes
     {
         internal static Device CreateDevice(Ewelink context, Device device)
         {
+
             var newDevice = CreateDeviceByDeviceName(device.deviceName);
-            if (newDevice == null)
-                newDevice = CreateDeviceByUiid(device.uiid);
             if (newDevice == null)
                 newDevice = new Device();
             device.Adapt(newDevice);
@@ -20,16 +19,20 @@ namespace EwelinkNet.Classes
 
             return newDevice;
         }
-        private static Device CreateDeviceByUiid(int uiid)
-        {
-            Device newDevice = null;
-            switch(uiid)
-            {
-                case 174: newDevice = new MultiSwitchDevice();break;
-                case 165:    newDevice = new CurtainDevice(); break;
-            }
-            return newDevice;
-        }
+        //private static Device CreateDeviceByUiid(int uiid)
+        //{
+        //    Device newDevice = null;
+        //    switch(uiid)
+        //    {
+        //        case 160:
+        //        case 161:
+        //        case 162:
+        //        case 174:
+        //            newDevice = new MultiSwitchDevice();break;
+        //        case 165:    newDevice = new CurtainDevice(); break;
+        //    }
+        //    return newDevice;
+        //}
 
             private static Device CreateDeviceByDeviceName(string deviceName)
         {
@@ -49,6 +52,7 @@ namespace EwelinkNet.Classes
                     case "SWITCH_2": newDevice = new MultiSwitchDevice(); break;
                     case "SWITCH_3": newDevice = new MultiSwitchDevice(); break;
                     case "SWITCH_4": newDevice = new MultiSwitchDevice(); break;
+                    case "SWITCH_6": newDevice = new MultiSwitchDevice(); break;
                     case "OSPF": newDevice = new SwitchDevice(); break;
                     case "CURTAIN": newDevice = new CurtainDevice(); break;
                     case "EW-RE": newDevice = new SwitchDevice(); break;
@@ -91,7 +95,8 @@ namespace EwelinkNet.Classes
                     case "BLADELESS_FAN": newDevice = new SwitchDevice(); break;
                     case "NEW_HUMIDIFIER": newDevice = new SwitchDevice(); break;
                     case "WARM_AIR_BLOWER": newDevice = new SwitchDevice(); break;
- 
+                    case "MOTOR": newDevice = new MotorDevice(); break;
+
                 }
 
             }

@@ -11,10 +11,15 @@ namespace DebugHost.apps.Extensions;
 public class MttEntitySubscriptionApp : IAsyncInitializable
 {
     private readonly IHaContext _ha;
-    private readonly ILogger<MttEntitySubscriptionApp> _logger;
+    static ILogger<MttEntitySubscriptionApp> _logger;
     private readonly IMqttEntityManager _entityManager;
     private readonly Ewelink _eWelink;
 
+    static void Logger(string log)
+    {
+        if(_logger != null)
+        _logger.LogInformation(log);
+;    }
     public MttEntitySubscriptionApp(IHaContext ha, ILogger<MttEntitySubscriptionApp> logger,
         IMqttEntityManager entityManager)
     {
@@ -42,64 +47,67 @@ public class MttEntitySubscriptionApp : IAsyncInitializable
     }
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
+        Ewelink.logger += Logger;
         await _eWelink.GetCredentials();
         await _eWelink.GetDevices();
             _eWelink.OpenWebSocket();
         await loadDevices(_eWelink.Devices);
 
     }
+
+
+        async Task loadMultiSwitch(MultiSwitchDevice multiSw)
+    {
+        for (int i = 0; i < multiSw.NumChannels; i++)
+        {
+            var entityId = "switch." + multiSw.name.Replace(" ", "") + "_" + i;
+
+            int channel = i;
+            await _entityManager.CreateAsync(entityId,
+                new EntityCreationOptions(Name: multiSw.name + " " + i, PayloadOn: "on", PayloadOff: "off", UniqueId: multiSw.deviceid + i))
+               .ConfigureAwait(false);
+            (await _entityManager.PrepareCommandSubscriptionAsync(entityId).ConfigureAwait(false)).
+                 Subscribe(new Action<string>(async status => { turnSwitchOnOrOff(multiSw, status, entityId, channel); }));
+        }
+    }
     async Task loadDevices(Device[] devices)
     {
+
         foreach (var device in devices)
         {
 
             var multiSw = device as MultiSwitchDevice;
+            
             if (multiSw != null)
             {
                 try
                 {
-                    for (int i = 0; i < multiSw.NumChannels; i++)
-                    {
-                        var entityId = "switch." + device.name.Replace(" ", "") + "_" + i;
-
-                        int channel = i;
-                        await _entityManager.CreateAsync(entityId,
-                            new EntityCreationOptions(Name: device.name + " " + i, PayloadOn: "on", PayloadOff: "off", UniqueId: device.deviceid + i))
-                           .ConfigureAwait(false);
-                        (await _entityManager.PrepareCommandSubscriptionAsync(entityId).ConfigureAwait(false)).
-                             Subscribe(new Action<string>(async status => { turnSwitchOnOrOff(multiSw, status, entityId, channel); }));
-                    }
+                    int ch = multiSw.NumChannels;
+                    await loadMultiSwitch(multiSw);
                 }
                 catch (Exception)
                 {
 
-                    _logger.LogDebug("unsupported device", device.name, device.deviceName);
+                    _logger.LogInformation("unsupported device", device.name, device.deviceName);
                 }
             }
-            var curtainDevice = device as CurtainDevice;
-            if (curtainDevice != null)
+
+
+            var motorDevice = device as MotorDevice;
+            if (motorDevice != null)
             {
-                var entityId = "Cover." + device.name.Replace(" ", "");
+                var entityId = "cover."+ motorDevice.name.Replace(" ", "");
 
                 await _entityManager.CreateAsync(entityId,
-                    new EntityCreationOptions(Name: device.name , PayloadOn: "open", PayloadOff: "close", UniqueId: device.deviceid))
+                    new EntityCreationOptions( Name: motorDevice.name, UniqueId: motorDevice.deviceid))
                    .ConfigureAwait(false);
                 (await _entityManager.PrepareCommandSubscriptionAsync(entityId).ConfigureAwait(false)).
-                     Subscribe(new Action<string>(async status => { openOrCloseCurtain(curtainDevice, status, entityId); }));
+                     Subscribe(new Action<string>(async status => { turnMotorOnOrOff(motorDevice, status, entityId); }));
+
             }
         }
     }
-    void openOrCloseCurtain(CurtainDevice curtain, string status, string entityId)
-    {
 
-        if (curtain == null)
-            return;
-        if(status == "open")
-            curtain.SetOpen(100);
-        else
-            curtain.SetClose(0);
-
-    }
     void turnSwitchOnOrOff(MultiSwitchDevice multiSw, string status,string entityId,int channel)
     {
 
@@ -112,5 +120,21 @@ public class MttEntitySubscriptionApp : IAsyncInitializable
         _entityManager.SetStateAsync(entityId, status);
 
     }
-   
+
+    void turnMotorOnOrOff(MotorDevice motor, string status, string entityId)
+    {
+
+        if (motor == null)
+            return;
+        if (status == "OPEN")
+            motor.SetOpen();
+        else if (status == "CLOSE")
+            motor.SetClose();
+        else if (status == "STOP")
+            motor.stop();
+        _entityManager.SetStateAsync(entityId, status);
+
+    }
+
+
 }

@@ -65,7 +65,7 @@ namespace EwelinkNet
 
         public async Task<string> GetRegion()
         {
-            var url = Constants.URLs.GetApiUrl("us");
+            var url = Constants.URLs.GetApiUrl("as");
 
             var response = await API.Rest.GetCredentials(url, email, password);
             dynamic credentials = JsonConvert.DeserializeObject<ExpandoObject>(response);
@@ -82,20 +82,20 @@ namespace EwelinkNet
         public void RestoreDevicesFromFile(string filename = "devices.json") => CreateDevices(System.IO.File.ReadAllText(filename).FromJson<Device[]>());
 
         public void RestoreArpTableFromFile(string filename = "arp-table.json") => Arptable.RestoreFromFile(filename);
-
+        public delegate void Logger(string log);
+        public static Logger logger;
 
         public async Task GetDevices()
         {
+            logger("getDevices1 ");
             var url = Constants.URLs.GetApiUrl(region);
-
+            logger("getDevices: " + url );
             var response = await API.Rest.GetDevices(url, Credentials.at);
             CreateDevices(response);
         }
 
         private void CreateDevices(string json)
         {
-            var tt = JsonConvert.DeserializeObject<DeviceList>(json);
-            var jj = JsonConvert.DeserializeObject<DeviceList>(json).devicelist.ToArray();
             CreateDevices(JsonConvert.DeserializeObject<DeviceList>(json).devicelist.ToArray());
         }
 

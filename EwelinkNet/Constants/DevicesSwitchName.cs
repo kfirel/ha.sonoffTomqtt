@@ -38,6 +38,8 @@ namespace EwelinkNet.Constants
             {"GSM_SOCKET_3", "switches"},
             {"SOCKET_2", "switches"},
             {"SWITCH_2", "switches"},
+            {"SWITCH_6", "switches"},
+
             {"GSM_SOCKET_2", "switches"},
             {"CUN_YOU_DOOR", "switches"},
             {"FAN_LIGHT", "switches"},
@@ -50,6 +52,7 @@ namespace EwelinkNet.Constants
             {"ZIGBEE_SWITCH_2", "switches"},
             {"ZIGBEE_SWITCH_3", "switches"},
             {"ZIGBEE_SWITCH_4", "switches"},
+            {"MOTOR", "switches" },
 
             {"THREE_GEAR_FAN", "fan"},
             {"SENSORS_CENTER", "state"},

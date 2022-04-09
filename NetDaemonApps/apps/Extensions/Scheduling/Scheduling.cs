@@ -15,8 +15,8 @@ public class SchedulingApp
         scheduler.RunEvery(TimeSpan.FromSeconds(5), () =>
         {
             // Make sure we do not flood the notifications :)
-            if (count++ < 3)
-                ha.CallService("notify", "persistent_notification", data: new { message = "This is a scheduled action!", title = "Schedule!" });
+   //         if (count++ < 3)
+   //             ha.CallService("notify", "persistent_notification", data: new { message = "This is a scheduled action!", title = "Schedule!" });
         });
     }
 }

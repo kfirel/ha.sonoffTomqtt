@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -34,6 +34,8 @@
         <PackageReference Include="JoySoftware.NetDaemon.Extensions.Scheduling" Version="22.7.0" />
         <PackageReference Include="JoySoftware.NetDaemon.Extensions.Logging" Version="22.7.0" />
         <PackageReference Include="JoySoftware.NetDaemon.Extensions.Tts" Version="22.7.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="RestSharp" Version="107.3.0" />
         <PackageReference Include="System.Reactive" Version="5.0.0" />
     </ItemGroup>
 </Project>

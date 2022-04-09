@@ -7,28 +7,28 @@ using System.Threading.Tasks;
 
 namespace EwelinkNet.Classes
 {
-    public class CurtainDevice : SwitchDevice
+    public class MotorDevice : SwitchDevice
     {
-        public void SetClose(int percent)
+        public void SetClose()
         {
 
             dynamic data = new ExpandoObject();
-            ExpandoHelpers.AddProperty(data, "setClose", percent);
+            ExpandoHelpers.AddProperty(data, "motorTurn", 2);
 
             UpdateDevice(data);
         }
-        public void SetOpen(int percent)
+        public void SetOpen()
         {
             dynamic data = new ExpandoObject();
-            ExpandoHelpers.AddProperty(data, "setOpen", percent);
+            ExpandoHelpers.AddProperty(data, "motorTurn", 1);
 
             UpdateDevice(data);
         }
 
-        public void stop(int percent)
+        public void stop()
         {
             dynamic data = new ExpandoObject();
-            ExpandoHelpers.AddProperty(data, "setOpen", percent);
+            ExpandoHelpers.AddProperty(data, "motorTurn", 0);
 
             UpdateDevice(data);
         }

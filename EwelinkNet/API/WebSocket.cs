@@ -29,6 +29,7 @@ namespace EwelinkNet.API
             websocket = new WebSocketSharp.WebSocket(url);
 
             websocket.OnMessage += Websocket_OnMessage;
+            websocket.OnClose += Websocket_OnClose;
             websocket.Connect();
             IsConnected = true;
 
@@ -36,10 +37,19 @@ namespace EwelinkNet.API
             websocket.Send(wsCredentialsPayload.AsJson());
         }
 
+        private void Websocket_OnClose(object sender, CloseEventArgs e)
+        {
+            websocket.Connect();
+            //throw new NotImplementedException();
+        }
+
         public void UpdateDevice(string apiKey, string deviceId, object @params)
         {
             var wsUpdatePayload = new WsUpdatePayload(deviceId, apiKey, @params);
-            websocket.Send(wsUpdatePayload.AsJson());
+            var tt = wsUpdatePayload.AsJson();
+            if (!websocket.IsAlive)
+                websocket.Connect();
+            websocket.Send(tt);
         }
 
 
@@ -52,7 +62,7 @@ namespace EwelinkNet.API
         private void Websocket_OnMessage(object sender, MessageEventArgs e)
         {
             var response = e.Data.FromJson<ExpandoObject>();
-
+            Console.WriteLine(e.Data.ToString());
             object message;
             if (ExpandoHelpers.HasProperty(response, "error")) message = response.Adapt<WsLoginResponse>();
             else message = response.Adapt<WsUpdateResponse>();
